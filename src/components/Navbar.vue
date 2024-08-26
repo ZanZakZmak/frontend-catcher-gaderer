@@ -16,8 +16,11 @@
         prepend-inner-icon="mdi-magnify"
       ></v-text-field>
       <v-spacer></v-spacer>
-      <v-btn @click="logOut()">
+      <v-btn @click="logOut()" v-if="auth.authenticated">
         <v-icon left>mdi-logout-variant</v-icon> <span>Logout</span>
+      </v-btn>
+      <v-btn v-if="!auth.authenticated">
+        <v-icon left>mdi-logout-variant</v-icon> <span>Login</span>
       </v-btn>
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" app absolute temporary>
@@ -41,10 +44,12 @@
 </template>
 <script>
 import store from "@/store.js";
+import { Auth } from "@/services";
 export default {
   data() {
     return {
-      store,
+      store: store,
+      auth: Auth.state,
       drawer: false,
       routes: [
         { icon: "mdi-view-dashboard", name: "landing Page", routePath: "/" },
@@ -72,6 +77,9 @@ export default {
   methods: {
     logOut() {
       console.log("signed out");
+      console.log("signed out", this.auth.authenticated);
+      Auth.logout();
+      this.$router.go();
     },
   },
 };

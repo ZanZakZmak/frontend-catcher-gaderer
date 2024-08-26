@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import { Auth } from "@/services";
 
 Vue.use(VueRouter);
 
@@ -72,4 +73,15 @@ const router = new VueRouter({
   routes,
 });
 
+router.beforeEach(async (to, from, next) => {
+  const publicRoutes = ["/", "/about", "/login", "/register"];
+  const loginPotreban = !publicRoutes.includes(to.path);
+  let user = await Auth.getUser();
+  if (loginPotreban && !user) {
+    next("/login");
+    return;
+  }
+
+  next();
+});
 export default router;

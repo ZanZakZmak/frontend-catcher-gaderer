@@ -8,10 +8,10 @@
 
 <script>
 import HelloWorld from "../components/HelloWorld";
-import { objekt, test, Service, Posts } from "@/services";
+import { Service, Posts } from "@/services";
 
-console.log("kakav je test: ", test);
-console.log("kakav je test: ", objekt);
+//console.log("kakav je test: ", test);
+//console.log("kakav je test: ", objekt);
 
 export default {
   name: "Home",
