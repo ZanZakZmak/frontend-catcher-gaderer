@@ -23,6 +23,8 @@ export default {
     return {};
   },
   methods: {
+    /*
+
     getData() {
       fetch("http://localhost:3000/data")
         .then((response) => {
@@ -52,10 +54,11 @@ export default {
       let newpost = await Posts.delete(postID);
       console.log("Spremljeni post", newpost.data);
     },
+    */
   },
   mounted() {
     //this.getData();
-    this.getDataAxsios();
+    //this.getDataAxsios();
   },
 };
 </script>

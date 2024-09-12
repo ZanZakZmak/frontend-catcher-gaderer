@@ -43,7 +43,7 @@
   </v-app>-->
   <v-app>
     <Navbar />
-    <v-main>
+    <v-main class="background teal lighten-1">
       <router-view></router-view>
     </v-main>
   </v-app>

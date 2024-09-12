@@ -37,25 +37,26 @@ Service.interceptors.response.use(
 
 // naš objekt za sve pozive koji se dotiču `Post`ova
 let Posts = {
-  async getAll1(searchTerm, filters) {
-    // `/posts?title={searchTerm}&key1={filters.key1}&key2={filters.key2}`
+  async getAll(searchTerm, filters) {
     try {
-      //return Service.get(`/posts?title=${searchTerm}`);
       let response = await Service.get(
-        `/tesiranjePosts?title=${searchTerm}&key1=${filters.key1}&key2=${filters.key2}&key3=${filters.key3}`
+        `/posts?search=${searchTerm}&areaFilter=${filters.areaFilter}&categoryFilter=${filters.categoryFilter}`
       );
       let data = response.data;
       console.log("Podaci s backenda", data);
 
       data = data.map((element) => {
         return {
-          comments: element.comments,
+          id: element._id,
+          title: element.title,
+          text: element.text,
+          imgUrl: element.imgUrl,
           createdBy: element.createdBy,
           createdByID: element.createdByID,
-          date: element.date,
-          imgUrl: element.imgUrl,
-          text: element.text,
-          title: element.title,
+          createdTime: element.createdTime,
+          area: element.area,
+          category: [...element.category],
+          comments: [...element.comments],
         };
       });
       return data;
@@ -65,28 +66,38 @@ let Posts = {
       console.log("moj error ", error);
     }
   },
-  async getAll(searchTerm) {
+  async add1(postData) {
+    try {
+      let response = await Service.post("/posts", postData);
+      return response;
+    } catch (error) {
+      return { errorMassage: error };
+    }
+  },
+  async getOne(postId) {
+    try {
+      let response = await Service.get(`/post/${postId}`);
+      let data = response.data;
+      console.log("Podaci s backenda", data);
+      return data;
+    } catch (error) {
+      console.log("moj error ", error);
+    }
+  },
+  /*async getAll(searchTerm) {
     try {
       //return Service.get(`/posts?title=${searchTerm}`);
       let response = await Service.get(`/tesiranjeMongoTAN`);
       let data = response.data;
       console.log("Podaci s backenda", data);
-      /*data = data.map((doc) => {
-      return {
-        id: doc.id,
-        url: doc.source,
-        email: doc.createdBy,
-        title: doc.title,
-        posted_at: Number(doc.postedAt),
-      };
-    });*/
+      
       return data;
 
       //return await Service.get(`/data`);
     } catch (error) {
       console.log("moj error ", error);
     }
-  },
+  },*/
   async add(post) {
     let x = {
       name: "Jane Doe",
@@ -102,6 +113,76 @@ let Posts = {
     let response = await Service.delete(`/tesiranjeMongoTAN/${postId}`);
 
     return response;
+  },
+};
+// naš objekt za sve pozive koji se dotiču `comments`
+let Comments = {
+  //add comment
+  async addComment(postId, postData) {
+    try {
+      let response = await Service.post(`/post/${postId}/comment`, postData);
+      return response;
+    } catch (error) {
+      return { errorMassage: error };
+    }
+  },
+  async delete(postId, commentId) {
+    try {
+      await Service.delete(
+        `/post/:postid${postId}/comments/:comid${commentId}`
+      );
+    } catch (error) {
+      return { errorMassage: error };
+    }
+  },
+};
+// naš objekt za sve pozive koji se dotiču `encyclopedia`
+let Encyclopedia = {
+  async getAll(searchTerm, filters) {
+    try {
+      let response = await Service.get(
+        `/encyclopedia`
+        //?search=${searchTerm}&areaFilter=${filters.areaFilter}&categoryFilter=${filters.categoryFilter}
+      );
+      let data = response.data;
+      console.log("Podaci s backenda", data);
+
+      data = data.map((element) => {
+        return {
+          id: element._id,
+          name: element.name,
+          nameLat: element.nameLat,
+          namesAlt: element.namesAlt,
+          imgUrl: element.imgUrl,
+          poison: element.poison,
+          category: element.category,
+          description: element.description,
+        };
+      });
+      return data;
+
+      //return await Service.get(`/data`);
+    } catch (error) {
+      console.log("moj error ", error);
+    }
+  },
+  async add(encyclopediaData) {
+    try {
+      let response = await Service.post("/encyclopedia", encyclopediaData);
+      return response;
+    } catch (error) {
+      return { errorMassage: error };
+    }
+  },
+  async getOne(encyclopediaId) {
+    try {
+      let response = await Service.get(`/post/${encyclopediaId}`);
+      let data = response.data;
+      console.log("Podaci s backenda", data);
+      return data;
+    } catch (error) {
+      console.log("moj error ", error);
+    }
   },
 };
 // naš objekt za sve pozive koji se dotiču `Auth`
@@ -129,6 +210,10 @@ let Auth = {
     return true;
   },
   getUser() {
+    //promjenio zbog statea
+    if (localStorage.length === 0) {
+      return { token: null, id: null, userName: null, email: null };
+    }
     return JSON.parse(localStorage.getItem("user"));
   },
   getToken() {
@@ -142,7 +227,8 @@ let Auth = {
   // provjera jesmo li autentificirani
   authenticated() {
     let user = Auth.getUser();
-    if (user) {
+    //promjeno zbog dohvata sa statea
+    if (user.token) {
       return true;
     }
     return false;
@@ -151,6 +237,7 @@ let Auth = {
   // get sluzi za takozvane getter funkcije koje funkcijoniraju u js slicno kao computed to jest mogu bit funkcija ali ih možemo čitati poput varijable.
   state: {
     get user() {
+      console.log("test case", Auth.getUser());
       return Auth.getUser();
     },
     get authenticated() {
@@ -159,4 +246,4 @@ let Auth = {
   },
 };
 
-export { Service, Posts, Auth }; // exportamo Service za ručne pozive ili Posts za metode.
+export { Service, Posts, Auth, Comments, Encyclopedia }; // exportamo Service za ručne pozive ili Posts za metode.

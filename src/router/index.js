@@ -30,6 +30,15 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/PostsView.vue"),
   },
   {
+    path: "/post/:id",
+    name: "post-single",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/PostSingleView.vue"),
+  },
+  {
     path: "/info",
     name: "info",
     // route level code-splitting
@@ -77,7 +86,7 @@ router.beforeEach(async (to, from, next) => {
   const publicRoutes = ["/", "/about", "/login", "/register"];
   const loginPotreban = !publicRoutes.includes(to.path);
   let user = await Auth.getUser();
-  if (loginPotreban && !user) {
+  if (loginPotreban && !user.token) {
     next("/login");
     return;
   }
