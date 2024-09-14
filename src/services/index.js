@@ -128,9 +128,7 @@ let Comments = {
   },
   async delete(postId, commentId) {
     try {
-      await Service.delete(
-        `/post/:postid${postId}/comments/:comid${commentId}`
-      );
+      await Service.delete(`/post/${postId}/comments/${commentId}`);
     } catch (error) {
       return { errorMassage: error };
     }
@@ -141,8 +139,7 @@ let Encyclopedia = {
   async getAll(searchTerm, filters) {
     try {
       let response = await Service.get(
-        `/encyclopedia`
-        //?search=${searchTerm}&areaFilter=${filters.areaFilter}&categoryFilter=${filters.categoryFilter}
+        `/encyclopedia?search=${searchTerm}&poisonousFilter=${filters.poisonousFilter}&categoryFilter=${filters.categoryFilter}`
       );
       let data = response.data;
       console.log("Podaci s backenda", data);
@@ -176,7 +173,7 @@ let Encyclopedia = {
   },
   async getOne(encyclopediaId) {
     try {
-      let response = await Service.get(`/post/${encyclopediaId}`);
+      let response = await Service.get(`/encyclopedia/${encyclopediaId}`);
       let data = response.data;
       console.log("Podaci s backenda", data);
       return data;

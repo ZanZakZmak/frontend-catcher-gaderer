@@ -6,11 +6,11 @@ import { Auth } from "@/services";
 Vue.use(VueRouter);
 
 const routes = [
-  {
+  /*{
     path: "/",
     name: "home",
     component: HomeView,
-  },
+  },*/
   {
     path: "/about",
     name: "about",
@@ -19,6 +19,13 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+  },
+  {
+    path: "/",
+    name: "landingpage",
+
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/LandingPageView.vue"),
   },
   {
     path: "/posts",
@@ -57,6 +64,17 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/EncyclopediaView.vue"),
   },
   {
+    path: "/encyclopedia/:id",
+    name: "encyclopedia-item",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(
+        /* webpackChunkName: "about" */ "../views/EncyclopediaItemView.vue"
+      ),
+  },
+  {
     path: "/register",
     name: "register",
     // route level code-splitting
@@ -73,6 +91,13 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/LoginView.vue"),
+  },
+  {
+    path: "/edit-profile",
+    name: "edit-profile",
+
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/EditProfileView.vue"),
   },
 ];
 

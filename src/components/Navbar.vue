@@ -64,7 +64,11 @@ export default {
       auth: Auth.state,
       drawer: false,
       routes: [
-        { icon: "mdi-view-dashboard", name: "landing Page", routePath: "/" },
+        {
+          icon: "mdi mdi-home-circle-outline",
+          name: "landing Page",
+          routePath: "/",
+        },
         {
           icon: "mdi-view-dashboard",
           name: "posts",
@@ -76,13 +80,19 @@ export default {
           name: "enciclopedia",
           routePath: "/encyclopedia",
         },
-        { icon: "mdi-view-dashboard", name: "edit profile", routePath: "/" },
+        {
+          icon: "mdi mdi-account-cog",
+          name: "edit profile",
+          routePath: "/edit-profile",
+        },
+        /*
         {
           icon: "mdi-view-dashboard",
           name: "register",
           routePath: "/register",
         },
         { icon: "mdi-view-dashboard", name: "log-in", routePath: "/login" },
+         */
       ],
     };
   },

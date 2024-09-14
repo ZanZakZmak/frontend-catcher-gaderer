@@ -90,7 +90,7 @@
                 color="blue darken-1"
                 text
                 :disabled="!formValid"
-                @click="addPost()"
+                @click="addEncyclopediaItem()"
               >
                 Save
               </v-btn>
@@ -110,40 +110,43 @@
               class="mx-auto mb-4"
               max-width="270"
               dark
-              v-for="post in posts"
-              :key="post.id"
+              v-for="eitem in encyclopediaItems"
+              :key="eitem.id"
             >
-              <v-img :src="post.imgUrl" height="200px"></v-img>
+              <v-img :src="eitem.imgUrl" height="200px"></v-img>
 
-              <v-card-title> {{ post.title }} </v-card-title>
+              <v-card-title> {{ eitem.name }} </v-card-title>
 
-              <v-card-subtitle> Edition {{ post.area }} </v-card-subtitle>
+              <v-card-subtitle> Lat. {{ eitem.nameLat }} </v-card-subtitle>
               <v-divider></v-divider>
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title
-                    >Number of players :{{
-                      "Bgame.numberofPlayers[0]" +
-                      "by" +
-                      " Bgame.numberofPlayers[1]"
-                    }}</v-list-item-title
-                  >
-                  <v-list-item-title
-                    >Play time :{{ post.createdTime }}</v-list-item-title
-                  >
+                  <v-list-item-title> Alternative names: </v-list-item-title>
+                  <v-list-item-title>
+                    {{ eitem.namesAlt }}
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-divider></v-divider>
-              <v-chip v-for="item in post.category" :key="item" class="ma-1">
-                {{ item }}
+              <v-chip class="ma-1">
+                {{ eitem.category }}
               </v-chip>
               <v-divider></v-divider>
 
-              <v-card-actions class="justify-end">
+              <v-card-actions>
+                <v-icon
+                  v-if="eitem.poison == 'poisonous'"
+                  color="teal lighten-3"
+                  >mdi mdi-skull-crossbones-outline</v-icon
+                >
+                <v-icon v-if="eitem.poison == 'edible'" color="teal lighten-3"
+                  >mdi mdi-silverware-fork-knife</v-icon
+                >
+                <v-spacer></v-spacer>
                 <v-btn
                   color="teal lighten-3"
                   icon
-                  @click="gotoOnePost(post.id)"
+                  @click="gotoOneEncyclopediaItem(eitem.id)"
                 >
                   <v-icon>mdi mdi-open-in-new</v-icon>
                 </v-btn>
@@ -155,15 +158,6 @@
           <v-card dark height="auto" width="250" class="pa-3">
             <!--korak jedan primitivni interface za filtere-->
             <v-card-title>Filers</v-card-title>
-            <v-divider></v-divider>
-
-            <v-card-subtitle>Number of players</v-card-subtitle>
-
-            <v-text-field
-              v-model="filterPlayersNum"
-              label="number of players"
-              type="number"
-            />
             <v-divider></v-divider>
             <v-card-subtitle>Category of ingridients</v-card-subtitle>
 
@@ -177,23 +171,12 @@
             ></v-select>
             <v-divider></v-divider>
 
-            <v-card-subtitle>Area of gadering</v-card-subtitle>
+            <v-card-subtitle>Edible</v-card-subtitle>
             <v-select
-              v-model="filterArea"
-              :items="[
-                'Buje',
-                'Buzet',
-                'Labin',
-                'Novigrad',
-                'Pazin',
-                'Poreč',
-                'Pula',
-                'Rovinj',
-                'Umag',
-                'Vodnjan',
-              ]"
+              v-model="filterPoisonous"
+              :items="['poisonous', 'edible']"
               chips
-              label="Select area"
+              label="Poisonous"
               solo
             ></v-select>
             <v-card-actions>
@@ -228,6 +211,8 @@ export default {
       posts: null,
       filterdPosts: null,
 
+      encyclopediaItems: null,
+
       //delete later
       //croppa stvari
       myCroppa: {},
@@ -258,39 +243,40 @@ export default {
       filterPlayersNum: null,
 
       filterCategory: null,
+      filterPoisonous: null,
+
       filterArea: null,
       //upitni
       fiterTimeframe: null,
       filterSort: null,
     };
   },
+  watch: {
+    "store.searchTerm": function () {
+      this.trigerFunction();
+    },
+    //"store.searchTerm": function(val) {this.fetchPosts(val)}
+  },
   methods: {
     //change to encyclopedia
-    async getPosts() {
+    async getEncyclopediaItem() {
       let search = store.searchTerm;
-      //ako koristim string
-      function changeToString(arr) {
-        if (arr === null) {
-          return null;
-        } else {
-          return arr.toString();
-        }
-      }
+
       console.log("filter categori ", this.filterCategory);
 
       let filters = {
-        areaFilter: this.filterArea,
-        categoryFilter: changeToString(this.filterCategory),
+        poisonousFilter: this.filterPoisonous,
+        categoryFilter: this.filterCategory,
       };
-      let data = await Posts.getAll(search, filters);
+      let data = await Encyclopedia.getAll(search, filters);
 
       //use {...} for objects or deep clone for all layers <let cloneObject = JSON.parse(JSON.stringify(oldObject));>
       //this.posts = [...data];
       //map
-      this.posts = data;
+      this.encyclopediaItems = data;
       console.log(data);
     },
-    async addPost() {
+    async addEncyclopediaItem() {
       let doc = {
         name: this.nameForm,
         nameLat: this.nameLatForm,
@@ -306,21 +292,19 @@ export default {
         this.closeDialog();
       }
     },
-    gotoOnePost(postId) {
-      this.$router.push(`/post/${postId}`);
+    gotoOneEncyclopediaItem(itemId) {
+      this.$router.push(`/encyclopedia/${itemId}`);
     },
     //filter
     filterPosts() {
       //pozvati get
-      this.getPosts();
+      this.getEncyclopediaItem();
     },
     clearFilter() {
-      this.filterPlayersNum = null;
-
       this.filterCategory = null;
-      this.filterArea = null;
+      this.filterPoisonous = null;
       //pozvati get
-      this.getPosts();
+      this.getEncyclopediaItem();
     },
     //dialog
     closeDialog() {
@@ -336,16 +320,20 @@ export default {
 
       //zatvoriti dialog
       this.dialog = false;
+      this.refresh();
+    },
+    refresh() {
+      this.getEncyclopediaItem();
     },
 
     trigerFunction() {
       console.log("ovo se traži :", store.searchTerm);
-      this.getPosts();
+      this.getEncyclopediaItem();
       return store.searchTerm;
     },
   },
   mounted() {
-    this.getPosts();
+    this.getEncyclopediaItem();
   },
 };
 </script>

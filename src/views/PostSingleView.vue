@@ -136,7 +136,14 @@
               class="justify-end pr-1 pt-2"
               v-if="comment.createdById == auth.user.id"
             >
-              <v-btn class="mx-2" fab dark color="red darken-2" x-small>
+              <v-btn
+                class="mx-2"
+                fab
+                dark
+                color="red darken-2"
+                x-small
+                @click="deleteComent(postInfo.id, comment.id)"
+              >
                 <v-icon dark> mdi mdi-close-thick</v-icon>
               </v-btn>
             </v-card-title>
@@ -214,8 +221,10 @@ export default {
     },
     //delete coment?
     async deleteComent(postId, commentId) {
+      //let postId = this.postInfo.id;
       //stavit provjeru negdje
       await Comments.delete(postId, commentId);
+      this.refresh();
     },
     closeDialog() {
       this.commentText = null;

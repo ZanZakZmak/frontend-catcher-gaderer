@@ -353,6 +353,9 @@ export default {
       this.getPosts();
       return store.searchTerm;
     },
+    refresh() {
+      this.getPosts();
+    },
   },
   mounted() {
     this.getPosts();
