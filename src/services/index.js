@@ -2,6 +2,7 @@ import axios from "axios";
 //import router from "@/router"; // ovako importamo router izvan VUE componente
 import keks from "@/store.js";
 import router from "@/router/index.js";
+import { info } from "sass";
 
 let Service = axios.create({
   baseURL: "http://localhost:3000/",
@@ -37,103 +38,165 @@ Service.interceptors.response.use(
 
 // naš objekt za sve pozive koji se dotiču `Post`ova
 let Posts = {
-  async getAll(searchTerm, filters) {
-    try {
-      let response = await Service.get(
-        `/posts?search=${searchTerm}&areaFilter=${filters.areaFilter}&categoryFilter=${filters.categoryFilter}`
-      );
-      let data = response.data;
-      console.log("Podaci s backenda", data);
+  Social: {
+    async getAll(searchTerm, filters) {
+      try {
+        let response = await Service.get(
+          `/posts/social?search=${searchTerm}&areaFilter=${filters.areaFilter}&categoryFilter=${filters.categoryFilter}`
+        );
+        let data = response.data;
+        console.log("Podaci s backenda", data);
 
-      data = data.map((element) => {
-        return {
-          id: element._id,
-          title: element.title,
-          text: element.text,
-          imgUrl: element.imgUrl,
-          createdBy: element.createdBy,
-          createdByID: element.createdByID,
-          createdTime: element.createdTime,
-          area: element.area,
-          category: [...element.category],
-          comments: [...element.comments],
-        };
-      });
-      return data;
+        data = data.map((element) => {
+          return {
+            id: element._id,
+            title: element.title,
+            text: element.text,
+            imgUrl: element.imgUrl,
+            createdBy: element.createdBy,
+            createdByID: element.createdByID,
+            createdTime: element.createdTime,
+            area: element.area,
+            category: [...element.category],
+            comments: [...element.comments],
+          };
+        });
+        return data;
 
-      //return await Service.get(`/data`);
-    } catch (error) {
-      console.log("moj error ", error);
-    }
-  },
-  async add1(postData) {
-    try {
-      let response = await Service.post("/posts", postData);
+        //return await Service.get(`/data`);
+      } catch (error) {
+        console.log("moj error ", error);
+      }
+    },
+    async add(postData) {
+      try {
+        let response = await Service.post("/posts", postData);
+        return response;
+      } catch (error) {
+        return { errorMassage: error };
+      }
+    },
+    //change this
+    async getOne(postId) {
+      try {
+        let response = await Service.get(`/post/${postId}`);
+        let data = response.data;
+        console.log("Podaci s backenda", data);
+        return data;
+      } catch (error) {
+        console.log("moj error ", error);
+      }
+    },
+    /*async getAll(searchTerm) {
+      try {
+        //return Service.get(`/posts?title=${searchTerm}`);
+        let response = await Service.get(`/tesiranjeMongoTAN`);
+        let data = response.data;
+        console.log("Podaci s backenda", data);
+        
+        return data;
+  
+        //return await Service.get(`/data`);
+      } catch (error) {
+        console.log("moj error ", error);
+      }
+    },*/
+    /*async add(post) {
+      let x = {
+        name: "Jane Doe",
+        email: "jane@abc.com",
+        age: 26,
+        hobbies: ["databases", "painting", "soccer"],
+      };
+      let response = await Service.post("/tesiranjeMongoTAN", post);
+  
       return response;
-    } catch (error) {
-      return { errorMassage: error };
-    }
-  },
-  async getOne(postId) {
-    try {
-      let response = await Service.get(`/post/${postId}`);
-      let data = response.data;
-      console.log("Podaci s backenda", data);
-      return data;
-    } catch (error) {
-      console.log("moj error ", error);
-    }
-  },
-  /*async getAll(searchTerm) {
-    try {
-      //return Service.get(`/posts?title=${searchTerm}`);
-      let response = await Service.get(`/tesiranjeMongoTAN`);
-      let data = response.data;
-      console.log("Podaci s backenda", data);
-      
-      return data;
+    },*/
+    async delete(postId) {
+      let response = await Service.delete(`/tesiranjeMongoTAN/${postId}`);
 
-      //return await Service.get(`/data`);
-    } catch (error) {
-      console.log("moj error ", error);
-    }
-  },*/
-  async add(post) {
-    let x = {
-      name: "Jane Doe",
-      email: "jane@abc.com",
-      age: 26,
-      hobbies: ["databases", "painting", "soccer"],
-    };
-    let response = await Service.post("/tesiranjeMongoTAN", post);
-
-    return response;
+      return response;
+    },
   },
-  async delete(postId) {
-    let response = await Service.delete(`/tesiranjeMongoTAN/${postId}`);
+  // naš objekt za sve pozive koji se dotiču `info`
+  Info: {
+    async getAll(searchTerm, filters) {
+      try {
+        let response = await Service.get(
+          `/posts/info?search=${searchTerm}&infoTypeFilter=${filters.infoTypeFilter}&categoryFilter=${filters.categoryFilter}`
+        );
+        let data = response.data;
+        console.log("Podaci s backenda", data);
 
-    return response;
+        data = data.map((element) => {
+          return {
+            id: element._id,
+            title: element.title,
+            text: element.text,
+            imgUrl: element.imgUrl,
+            createdBy: element.createdBy,
+            createdByID: element.createdByID,
+            createdTime: element.createdTime,
+            infoType: element.infoType,
+            category: [...element.category],
+            comments: [...element.comments],
+          };
+        });
+        return data;
+
+        //return await Service.get(`/data`);
+      } catch (error) {
+        console.log("moj error ", error);
+      }
+    },
+    async add(postData) {
+      try {
+        let response = await Service.post("/posts", postData);
+        return response;
+      } catch (error) {
+        return { errorMassage: error };
+      }
+    },
+    async getOne(postId) {
+      try {
+        let response = await Service.get(`/post/${postId}`);
+        let data = response.data;
+        console.log("Podaci s backenda", data);
+        return data;
+      } catch (error) {
+        console.log("moj error ", error);
+      }
+    },
+    async delete(postId) {
+      let response = await Service.delete(`/tesiranjeMongoTAN/${postId}`);
+
+      return response;
+    },
+  },
+  // naš objekt za sve pozive koji se dotiču `comments`
+  Comments: {
+    //add comment
+    async add(postId, postData) {
+      try {
+        let response = await Service.post(
+          `/posts/${postId}/comments`,
+          postData
+        );
+        return response;
+      } catch (error) {
+        return { errorMassage: error };
+      }
+    },
+    async delete(postId, commentId) {
+      try {
+        await Service.delete(`/posts/${postId}/comments/${commentId}`);
+      } catch (error) {
+        return { errorMassage: error };
+      }
+    },
   },
 };
-// naš objekt za sve pozive koji se dotiču `comments`
-let Comments = {
-  //add comment
-  async addComment(postId, postData) {
-    try {
-      let response = await Service.post(`/post/${postId}/comment`, postData);
-      return response;
-    } catch (error) {
-      return { errorMassage: error };
-    }
-  },
-  async delete(postId, commentId) {
-    try {
-      await Service.delete(`/post/${postId}/comments/${commentId}`);
-    } catch (error) {
-      return { errorMassage: error };
-    }
-  },
-};
+
 // naš objekt za sve pozive koji se dotiču `encyclopedia`
 let Encyclopedia = {
   async getAll(searchTerm, filters) {
@@ -243,4 +306,4 @@ let Auth = {
   },
 };
 
-export { Service, Posts, Auth, Comments, Encyclopedia }; // exportamo Service za ručne pozive ili Posts za metode.
+export { Service, Posts, Auth, Encyclopedia }; // exportamo Service za ručne pozive ili Posts za metode.

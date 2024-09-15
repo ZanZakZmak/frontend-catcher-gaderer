@@ -147,7 +147,11 @@
               <v-divider></v-divider>
 
               <v-card-actions class="justify-end">
-                {{ post.createdTime + " " + post.createdBy }}
+                <h5>
+                  {{
+                    formatTimestamp(post.createdTime) + " By " + post.createdBy
+                  }}
+                </h5>
                 <v-spacer></v-spacer>
                 coments: {{ post.comments.length }}
               </v-card-actions>
@@ -159,14 +163,55 @@
             <!--korak jedan primitivni interface za filtere-->
             <v-card-title>Filers</v-card-title>
             <v-divider></v-divider>
+            <!--delete ako ne stignes napraviti filtere-->
+            <v-card-subtitle>Range of time search</v-card-subtitle>
+            <v-menu
+              v-model="menu1"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="dateForm"
+                  label="Picker without buttons*"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="dateForm"
+                @input="menu1 = false"
+              ></v-date-picker>
+            </v-menu>
 
-            <v-card-subtitle>Number of players</v-card-subtitle>
-
-            <v-text-field
-              v-model="filterPlayersNum"
-              label="number of players"
-              type="number"
-            />
+            <v-menu
+              v-model="menu2"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="dateEndForm"
+                  label="Picker without buttons*"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="dateEndForm"
+                @input="menu2 = false"
+              ></v-date-picker>
+            </v-menu>
             <v-divider></v-divider>
             <v-card-subtitle>Category of ingridients</v-card-subtitle>
 
@@ -216,6 +261,7 @@
 
 <script>
 import { Posts, Auth } from "@/services";
+import moment from "moment";
 import store from "@/store.js";
 import HelloWorld from "../components/HelloWorld";
 
@@ -230,6 +276,16 @@ export default {
       store,
       posts: null,
       filterdPosts: null,
+
+      menu1: false,
+      menu2: false,
+
+      dateForm: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10),
+      dateEndForm: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10),
 
       //delete later
       //croppa stvari
@@ -294,7 +350,7 @@ export default {
         areaFilter: this.filterArea,
         categoryFilter: changeToString(this.filterCategory),
       };
-      let data = await Posts.getAll(search, filters);
+      let data = await Posts.Social.getAll(search, filters);
 
       //use {...} for objects or deep clone for all layers <let cloneObject = JSON.parse(JSON.stringify(oldObject));>
       //this.posts = [...data];
@@ -304,6 +360,7 @@ export default {
     },
     async addPost() {
       let doc = {
+        type: "social",
         title: this.titleForm,
         text: this.textForm,
         imgUrl: this.imgUrlForm,
@@ -314,10 +371,11 @@ export default {
         category: [...this.categoryForm],
         comments: [],
       };
-      let data = await Posts.add1(doc);
+      let data = await Posts.Social.add(doc);
       console.log(data);
       if (data) {
         this.closeDialog();
+        this.refresh();
       }
     },
     gotoOnePost(postId) {
@@ -355,6 +413,10 @@ export default {
     },
     refresh() {
       this.getPosts();
+    },
+    formatTimestamp(timestamp) {
+      //.fromNow()
+      return moment(timestamp).fromNow();
     },
   },
   mounted() {

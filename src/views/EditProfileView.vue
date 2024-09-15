@@ -15,14 +15,14 @@
               <v-card-subtitle align="start" justify="center">
                 Email:
                 <v-chip>
-                  {{ store.storeData.userInfo.userEmail }}
+                  {{ auth.user.email }}
                 </v-chip>
               </v-card-subtitle>
               <v-divider></v-divider>
               <v-card-subtitle align="start" justify="center">
                 Username:
                 <v-chip>
-                  {{ store.storeData.userInfo.userName }}
+                  {{ auth.user.username }}
                 </v-chip>
               </v-card-subtitle>
               <v-divider></v-divider>
@@ -124,6 +124,27 @@
               >
             </v-row>
 
+            <v-divider></v-divider>
+
+            <v-card-subtitle
+              >Old Password write the password to change previous
+              atributes</v-card-subtitle
+            >
+            <v-row class="my-3">
+              <v-form v-model="formValidOldPassword">
+                <v-text-field
+                  v-model="oldPassword"
+                  label="write old password"
+                  type="text"
+                  dense
+                  clearable
+                  outlined
+                  class="mx-3"
+                  :rules="[rules.required, rules.min]"
+                />
+              </v-form>
+            </v-row>
+
             <v-card-actions> </v-card-actions>
           </v-card>
         </v-col>
@@ -159,6 +180,7 @@
 //{? #ocjena #liste prijatelja i zahtjeva, #zasebni search za korisnike #profil za korisnika #dodavanje avatara nece se izraditi}
 
 import store from "@/store";
+import { Auth } from "@/services";
 
 export default {
   name: "EditProfile",
@@ -167,6 +189,7 @@ export default {
   data() {
     return {
       store,
+      auth: Auth.state,
       // snackbar data
       snackbar: false,
       text: "",
@@ -175,10 +198,12 @@ export default {
       newEmail: null,
       newPassword: null,
       newPasswordRepeat: null,
+      oldPassword: null,
       //form validity
       formValidName: false,
       formValidEmail: false,
       formValidPassword: false,
+      formValidOldPassword: false,
 
       rules: {
         required: (value) => !!value || "Required.",
@@ -196,13 +221,19 @@ export default {
     },
   },
   methods: {
-    async changeUsername() {},
+    async changeUsername() {
+      //na back iduser usernameNew oldPassword
+    },
 
     //treba dodat da ponovo autentificira za ovo
-    async changePassword() {},
+    async changePassword() {
+      //na back iduser passwordNew oldPassword
+    },
 
     //treba dodat da ponovo autentificira za ovo
-    async changeEmail() {},
+    async changeEmail() {
+      //na back iduser emailNew oldPassword
+    },
   },
   beforeCreate() {},
 };

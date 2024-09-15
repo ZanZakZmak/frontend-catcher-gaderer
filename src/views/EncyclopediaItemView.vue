@@ -37,6 +37,25 @@
             </v-card>
           </v-col>
           <v-col cols="12" sm="9">
+            <v-icon
+              v-if="encyclopediaItemInfo.poison == 'poisonous'"
+              color="red accent-4"
+              x-large
+            >
+              mdi mdi-skull-crossbones-outline
+            </v-icon>
+            <v-icon
+              v-if="encyclopediaItemInfo.poison == 'edible'"
+              color="light-green accent-4"
+              x-large
+            >
+              mdi mdi-silverware-fork-knife
+            </v-icon>
+            <v-spacer></v-spacer>
+
+            <h2>.</h2>
+            <v-spacer></v-spacer>
+
             <h2>Lat: {{ encyclopediaItemInfo.nameLat }}</h2>
             <v-spacer></v-spacer>
 
@@ -45,9 +64,6 @@
 
               {{ encyclopediaItemInfo.namesAlt }}
             </h2>
-
-            <v-spacer></v-spacer>
-            <h2>Avrage Play Time: {{ encyclopediaItemInfo.name }} Min</h2>
           </v-col>
         </v-row>
         <v-divider class="mb-7"></v-divider>
@@ -64,11 +80,12 @@
           <!--
             v-for="category in encyclopediaItemInfo.category"
             :key="category"
-            -->
+            
           <v-chip class="pa-5 mx-auto mb-4" color="teal darken-4" dark
             ><v-icon>mdi mdi-dice-multiple-outline</v-icon>
             <h1>{{ encyclopediaItemInfo.category }}</h1></v-chip
           >
+          -->
         </v-row>
       </v-col>
     </v-container>

@@ -8,7 +8,7 @@
             <v-col cols="12">
               <h1>
                 <!--mdi mdi-dice-5-outline-->
-                <v-icon color="black" large> mdi mdi-sprout</v-icon>
+                <v-icon color="black" large> mdi mdi-message-text</v-icon>
                 {{ postInfo.title }}
               </h1>
               <v-divider class="mb-2"></v-divider>
@@ -20,21 +20,55 @@
                   ></v-card>
                 </v-col>
                 <v-col cols="12" sm="8">
-                  <h2>
-                    Area: <v-chip>{{ postInfo.area }}</v-chip>
+                  <h2 v-if="postInfo.type == 'social'">
+                    Area:
+                    <v-chip color="teal darken-3" class="white--text">
+                      <h2>{{ postInfo.area }}</h2>
+                    </v-chip>
+                  </h2>
+                  <h2 v-if="postInfo.type == 'info'">
+                    Type of Forum post:
+
+                    <v-icon
+                      color="teal darken-4"
+                      x-large
+                      v-if="postInfo.infoType == 'info'"
+                    >
+                      mdi mdi-information-outline
+                    </v-icon>
+                    <v-icon
+                      color="teal darken-4"
+                      x-large
+                      v-if="postInfo.infoType == 'question'"
+                    >
+                      mdi mdi-chat-question-outline
+                    </v-icon>
+                    <v-chip color="teal darken-3" class="white--text">
+                      <h2>{{ postInfo.infoType }}</h2>
+                    </v-chip>
                   </h2>
                   <v-spacer></v-spacer>
 
-                  <h2>Created By: {{ postInfo.createdby }}</h2>
+                  <h2>
+                    Created By:
+                    <v-chip color="teal darken-3" class="white--text">
+                      <h2>{{ postInfo.createdby }}</h2>
+                    </v-chip>
+                  </h2>
 
                   <v-spacer></v-spacer>
-                  <h2>Date: {{ postInfo.createdTime }}</h2>
+                  <h2>
+                    Date:
+                    <v-chip color="teal darken-3" class="white--text">
+                      <h2>{{ formatStandardTime(postInfo.createdTime) }}</h2>
+                    </v-chip>
+                  </h2>
                 </v-col>
               </v-row>
               <v-divider class="mb-7"></v-divider>
 
-              <h2>Descrition:</h2>
-              <v-card color="teal">
+              <h2>Description:</h2>
+              <v-card color="teal" class="white--text">
                 <h3 style="max-height: 150px; overflow-y: auto">
                   {{ postInfo.text }}
                 </h3>
@@ -48,7 +82,27 @@
                   dark
                   v-for="category in postInfo.category"
                   :key="category"
-                  ><v-icon>mdi mdi-dice-multiple-outline</v-icon>
+                >
+                  <v-icon
+                    color="teal lighten-4"
+                    large
+                    v-if="category == 'fish'"
+                  >
+                    mdi mdi-fish
+                  </v-icon>
+                  <v-icon
+                    color="teal lighten-4"
+                    large
+                    v-if="category == 'fungi'"
+                    >mdi mdi-mushroom</v-icon
+                  >
+                  <v-icon
+                    color="teal lighten-4"
+                    large
+                    v-if="category == 'herb'"
+                  >
+                    mdi mdi-sprout
+                  </v-icon>
                   <h1>{{ category }}</h1></v-chip
                 >
               </v-row>
@@ -153,7 +207,11 @@
             }}</v-card-text>
             <v-card-actions color="red--text">
               <h5 color="red--text">
-                {{ comment.createdTime + " by " + comment.createdBy }}
+                {{
+                  formatTimestamp(comment.createdTime) +
+                  " by " +
+                  comment.createdBy
+                }}
               </h5>
             </v-card-actions>
           </v-card>
@@ -164,7 +222,8 @@
   </div>
 </template>
 <script>
-import { Posts, Auth, Comments } from "@/services";
+import moment from "moment";
+import { Posts, Auth } from "@/services";
 export default {
   name: "PostSingle",
   data() {
@@ -190,9 +249,11 @@ export default {
   methods: {
     //get one post
     async getPostSingle(postId) {
-      let data = await Posts.getOne(postId);
+      let data = await Posts.Social.getOne(postId);
       this.postInfo = {
+        type: data.type,
         area: data.area,
+        infoType: data.infoType,
         category: [...data.category],
         comments: [...data.comments], //nez dali treba deepcopy napraviti
         createdBy: data.createdBy,
@@ -215,7 +276,7 @@ export default {
         createdTime: Date.now(),
         postId: this.RouteID,
       };
-      await Comments.addComment(this.RouteID, commentData);
+      await Posts.Comments.add(this.RouteID, commentData);
       this.closeDialog();
       this.refresh();
     },
@@ -223,12 +284,19 @@ export default {
     async deleteComent(postId, commentId) {
       //let postId = this.postInfo.id;
       //stavit provjeru negdje
-      await Comments.delete(postId, commentId);
+      await Posts.Comments.delete(postId, commentId);
       this.refresh();
     },
     closeDialog() {
       this.commentText = null;
       this.dialog = false;
+    },
+    formatTimestamp(timestamp) {
+      //.fromNow()
+      return moment(timestamp).fromNow();
+    },
+    formatStandardTime(time) {
+      return moment(time).format("MMMM Do YYYY, h:mm:ss a");
     },
     refresh() {
       this.getPostSingle(this.RouteID);
