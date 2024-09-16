@@ -1,11 +1,10 @@
 import axios from "axios";
 //import router from "@/router"; // ovako importamo router izvan VUE componente
-import keks from "@/store.js";
-import router from "@/router/index.js";
-import { info } from "sass";
 
+// "http://localhost:3000"
+//"https://backend-catcher-gaderer.onrender.com"
 let Service = axios.create({
-  baseURL: "http://localhost:3000/",
+  baseURL: "https://backend-catcher-gaderer.onrender.com",
   timeout: 10000,
 });
 
@@ -44,8 +43,9 @@ let Posts = {
     async getAll(searchTerm, filters) {
       try {
         let response = await Service.get(
-          `/posts/social?search=${searchTerm}&areaFilter=${filters.areaFilter}&categoryFilter=${filters.categoryFilter}`
+          `/posts/social?search=${searchTerm}&areaFilter=${filters.areaFilter}&categoryFilter=${filters.categoryFilter}&startTimeFilter=${filters.startTimeFilter}&endTimeFilter=${filters.endTimeFilter}`
         );
+        //&startTimeFilter=${filters.startTimeFilter}&endTimeFilter=${filters.endTimeFilter}
         let data = response.data;
         console.log("Podaci s backenda", data);
 
@@ -133,6 +133,14 @@ let Posts = {
   async delete(postId) {
     //let response = await Service.delete(`/tesiranjeMongoTAN/${postId}`);
     //return response;
+    let response = await Service.delete(`/post/${postId}`);
+    //preko statusa za axsios error
+    if (response.status > 300) {
+      //return response.response.data.error;
+      return false;
+    } else {
+      return true;
+    }
   },
   // naš objekt za sve pozive koji se dotiču `comments`
   Comments: {

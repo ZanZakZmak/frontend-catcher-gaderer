@@ -175,8 +175,8 @@
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-text-field
-                  v-model="dateForm"
-                  label="Picker without buttons*"
+                  v-model="startTimeForm"
+                  label="Pick start date*"
                   prepend-icon="mdi-calendar"
                   readonly
                   v-bind="attrs"
@@ -184,7 +184,7 @@
                 ></v-text-field>
               </template>
               <v-date-picker
-                v-model="dateForm"
+                v-model="startTimeForm"
                 @input="menu1 = false"
               ></v-date-picker>
             </v-menu>
@@ -199,8 +199,8 @@
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-text-field
-                  v-model="dateEndForm"
-                  label="Picker without buttons*"
+                  v-model="endTimeForm"
+                  label="Pick end date*"
                   prepend-icon="mdi-calendar"
                   readonly
                   v-bind="attrs"
@@ -208,7 +208,7 @@
                 ></v-text-field>
               </template>
               <v-date-picker
-                v-model="dateEndForm"
+                v-model="endTimeForm"
                 @input="menu2 = false"
               ></v-date-picker>
             </v-menu>
@@ -277,12 +277,9 @@ export default {
       //filter calendar
       menu1: false,
       menu2: false,
-      dateForm: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10),
-      dateEndForm: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10),
+      // new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
+      startTimeForm: null,
+      endTimeForm: null,
 
       //delete later
       //croppa stvari
@@ -334,12 +331,18 @@ export default {
           return arr.toString();
         }
       }
-      console.log("filter categori ", this.filterCategory);
 
       let filters = {
         areaFilter: this.filterArea,
         categoryFilter: changeToString(this.filterCategory),
+        startTimeFilter: null,
+        endTimeFilter: null,
       };
+      if (this.startTimeForm && this.endTimeForm) {
+        filters.startTimeFilter = this.formatTimeToUnix(this.startTimeForm);
+        filters.endTimeFilter = this.formatTimeToUnix(this.endTimeForm);
+      }
+      console.log("filteri", filters);
       let data = await Posts.Social.getAll(search, filters);
 
       //use {...} for objects or deep clone for all layers <let cloneObject = JSON.parse(JSON.stringify(oldObject));>
@@ -405,6 +408,8 @@ export default {
     clearFilter() {
       this.filterCategory = null;
       this.filterArea = null;
+      this.startTimeForm = null;
+      this.endTimeForm = null;
       //pozvati get
       this.getPosts();
     },
@@ -432,6 +437,12 @@ export default {
     formatTimestamp(timestamp) {
       //.fromNow()
       return moment(timestamp).fromNow();
+    },
+    formatTimeToUnix(timestamp) {
+      if (timestamp) {
+        return moment(timestamp, "YYYY-MM-DD").valueOf();
+      }
+      return null;
     },
   },
   mounted() {

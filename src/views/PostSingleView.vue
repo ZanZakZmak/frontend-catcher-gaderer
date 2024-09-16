@@ -5,6 +5,15 @@
       <v-row>
         <v-col cols="12" sm="9" md="9" xs="12" align="center" justify="center">
           <v-container fill-height fluid class="align-start">
+            <v-btn
+              class="ma-3"
+              color="red darken-3"
+              dark
+              v-if="postInfo.createdById == auth.user.id"
+              @click="deletePost(postInfo.id)"
+            >
+              Delete Post!
+            </v-btn>
             <v-col cols="12">
               <h1>
                 <!--mdi mdi-dice-5-outline-->
@@ -52,7 +61,7 @@
                   <h2>
                     Created By:
                     <v-chip color="teal darken-3" class="white--text">
-                      <h2>{{ postInfo.createdby }}</h2>
+                      <h2>{{ postInfo.createdBy }}</h2>
                     </v-chip>
                   </h2>
 
@@ -265,6 +274,18 @@ export default {
         id: data._id,
       };
     },
+    async deletePost(postId) {
+      let result = await Posts.delete(postId);
+      if (result) {
+        // push to posts
+        this.$router.push(`/posts`);
+        //console
+        console.log("izbrisan post");
+      } else {
+        //console
+        console.log("nešto je pošlo po krivu");
+      }
+    },
 
     //add comment
     async addComment() {
@@ -308,106 +329,4 @@ export default {
     console.log("this is the id", this.RouteID);
   },
 };
-/* 
-
-<!--dialog start-->
-    <template>
-      <v-row justify="center" class="my-2">
-        <v-dialog v-model="dialog" persistent max-width="600px">
-          <!--toglle button-->
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              class="ma-3"
-              color="teal darken-3"
-              dark
-              v-bind="attrs"
-              v-on="on"
-            >
-              Add Post
-            </v-btn>
-          </template>
-          <!---->
-          <v-card dark>
-            <v-card-title>
-              <span class="text-h5">Add a New Post</span>
-            </v-card-title>
-            <v-card-text>
-              <v-form v-model="formValid">
-                <v-container>
-                  <v-row>
-                    <v-col cols="12" sm="6">
-                      <v-text-field
-                        v-model="titleForm"
-                        label="Title*"
-                        :rules="[rules.required]"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6">
-                      <div>add image</div>
-                      <!--<croppa v-model="myCroppa"></croppa>-->
-                    </v-col>
-
-                    <v-col cols="12" sm="6">
-                      <v-autocomplete
-                        v-model="areaForm"
-                        :items="[
-                          'Buje',
-                          'Buzet',
-                          'Labin',
-                          'Novigrad',
-                          'Pazin',
-                          'Poreč',
-                          'Pula',
-                          'Rovinj',
-                          'Umag',
-                          'Vodnjan',
-                        ]"
-                        label="area*"
-                        :rules="[rules.required, rules.requiredArr]"
-                      ></v-autocomplete>
-                    </v-col>
-
-                    <v-col cols="12" sm="6">
-                      <v-autocomplete
-                        v-model="categoryForm"
-                        :items="['fish', 'herb', 'fungi']"
-                        label="categories*"
-                        multiple
-                        :rules="[rules.required, rules.requiredArr]"
-                      ></v-autocomplete>
-                    </v-col>
-                    <v-col cols="12">
-                      <v-textarea
-                        label="Description"
-                        v-model="textForm"
-                        hint="Hint text"
-                      ></v-textarea>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-form>
-
-              <small>*indicates required field</small>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDialog()">
-                Close
-              </v-btn>
-              <v-btn
-                color="blue darken-1"
-                text
-                :disabled="!formValid"
-                @click="addPost()"
-              >
-                Save
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-row>
-    </template>
-    <!--end-->
-
-*/
 </script>

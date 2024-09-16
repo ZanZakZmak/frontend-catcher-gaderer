@@ -2,6 +2,8 @@
   <v-app-bar dark app>
     <!--<v-toolbar-side-icon></v-toolbar-side-icon>-->
     <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+
+    <img width="50" height="50" src="@/assets/CG logo.png" alt="khmmm" />
     <v-toolbar-title class="text-uppercase grey--text">
       <span>Chacher</span> <span class="font-weight-light">Gaderer</span>
     </v-toolbar-title>
@@ -78,7 +80,7 @@ export default {
         },
         { icon: "mdi-view-dashboard", name: "info forum", routePath: "/info" },
         {
-          icon: "mdi-view-dashboard",
+          icon: "mdi mdi-book-open-variant",
           name: "enciclopedia",
           routePath: "/encyclopedia",
         },

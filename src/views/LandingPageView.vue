@@ -8,14 +8,14 @@
         <v-col align="center" justify="center" cols="12" md="8" sm="8" xs="12"
           ><v-img
             lazy-src="@/assets/logo.png"
-            max-height="400"
-            max-width="400"
-            src="@/assets/logo.png"
+            max-height="420"
+            max-width="420"
+            src="@/assets/CG logo.png"
           ></v-img>
         </v-col>
         <!--Optional Chaining (?.): A modern JavaScript feature that avoids errors when trying to access properties on null or undefined objects.-->
         <v-col
-          v-show="!auth.authenticated"
+          v-show="!auth?.authenticated"
           align="center"
           justify="center"
           cols="12"
