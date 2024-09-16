@@ -204,19 +204,15 @@
 import { Posts, Auth } from "@/services";
 import store from "@/store.js";
 import moment from "moment";
-import HelloWorld from "../components/HelloWorld";
 
 export default {
   name: "InfoForum",
 
-  components: {
-    HelloWorld,
-  },
+  components: {},
   data() {
     return {
       store,
       posts: null,
-      filterdPosts: null,
 
       //delete later
       //croppa stvari
@@ -238,28 +234,15 @@ export default {
       imgUrlForm:
         "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Balantiocheilos_melanopterus_-_Karlsruhe_Zoo_02_%28cropped%29.jpg/1920px-Balantiocheilos_melanopterus_-_Karlsruhe_Zoo_02_%28cropped%29.jpg",
 
-      areaForm: null,
       infoTypeForm: null,
       categoryForm: null,
 
       //filteri
-
-      filterPlayersNum: null,
-
       filterCategory: null,
-      filterArea: null,
       filterInfoType: null,
-      //upitni
-      fiterTimeframe: null,
-      filterSort: null,
     };
   },
-  /*computed: {
-    trigerFunction() {
-      console.log("ovo se traži :", store.searchTerm);
-      return store.searchTerm;
-    },
-  },*/
+
   watch: {
     "store.searchTerm": function () {
       this.trigerFunction();
@@ -320,8 +303,6 @@ export default {
       this.getPosts();
     },
     clearFilter() {
-      this.filterPlayersNum = null;
-
       this.filterCategory = null;
       this.filterInfoType = null;
       //pozvati get
@@ -344,6 +325,7 @@ export default {
       return moment(timestamp).fromNow();
     },
 
+    //za watcher
     trigerFunction() {
       console.log("ovo se traži :", store.searchTerm);
       this.getPosts();

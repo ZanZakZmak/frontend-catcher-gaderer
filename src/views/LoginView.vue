@@ -28,7 +28,7 @@
 
             <v-card-subtitle
               >Alredy have an account go to
-              <v-chip @click="goToRegister()" color="blue">log in</v-chip>
+              <v-chip @click="goToRegister()" color="blue">register</v-chip>
             </v-card-subtitle>
           </v-card-text>
           <v-card-actions class="card-actions">
@@ -63,15 +63,12 @@
 </template>
 
 <script>
-import HelloWorld from "../components/HelloWorld";
 import { Auth } from "@/services";
 
 export default {
   name: "Login",
 
-  components: {
-    HelloWorld,
-  },
+  components: {},
   data() {
     return {
       //form
@@ -97,8 +94,12 @@ export default {
       try {
         let result = await Auth.login(this.email, this.password);
         console.log("dali sam ulogiran ", result);
-        if (result === true) {
+        if (result) {
           this.$router.push({ name: "posts" });
+        } else {
+          //snackbar aktivirati kod errora
+          this.text = "Wrong email or Password";
+          this.snackbar = true;
         }
       } catch (error) {
         console.log("error:", error);

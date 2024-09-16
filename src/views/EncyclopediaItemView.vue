@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import { Posts, Auth, Comments, Encyclopedia } from "@/services";
+import { Encyclopedia } from "@/services";
 import store from "@/store.js";
 
 export default {
@@ -103,39 +103,10 @@ export default {
     return {
       store,
       RouteID: this.$route.params.id,
-      boardGameInfo: {},
       encyclopediaItemInfo: {},
     };
   },
   methods: {
-    async getBoardGame() {
-      try {
-        const docRef = doc(db, "boardGames", this.RouteID);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          console.log("Document bglist data:", docSnap.data());
-          return {
-            boardGameId: this.RouteID,
-            bgImageUrl: docSnap.data().bgImageUrl,
-            bgName: docSnap.data().bgName,
-            categories: [...docSnap.data().categories],
-            edition: docSnap.data().edition,
-            numberofPlayersMin: docSnap.data().numberofPlayers[0],
-            numberofPlayersMax: docSnap.data().numberofPlayers[1],
-            playTime: docSnap.data().playTime,
-            desctiption: docSnap.data().desctiption,
-          };
-        } else {
-          // docSnap.data() will be undefined in this case
-          console.log("No such document!");
-          return null;
-        }
-      } catch (error) {
-        console.log(" eror ->", error);
-        //return null;
-      }
-    },
     async getEncyclopediaItem(itemId) {
       let data = await Encyclopedia.getOne(itemId);
       this.encyclopediaItemInfo = {
@@ -152,7 +123,6 @@ export default {
   },
 
   async mounted() {
-    //this.boardGameInfo = await this.getBoardGame();
     this.getEncyclopediaItem(this.RouteID);
   },
 };

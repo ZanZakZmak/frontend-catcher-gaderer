@@ -182,7 +182,7 @@
             <v-card-actions>
               <v-btn color="red darken-1" @click="clearFilter()"> clear </v-btn>
               <v-spacer></v-spacer>
-              <v-btn color="teal darken-1" @click="filterPosts()">
+              <v-btn color="teal darken-1" @click="filterItems()">
                 filter
               </v-btn>
             </v-card-actions>
@@ -195,21 +195,16 @@
 </template>
 
 <script>
-import { Posts, Auth, Encyclopedia } from "@/services";
+import { Encyclopedia } from "@/services";
 import store from "@/store.js";
-import HelloWorld from "../components/HelloWorld";
 
 export default {
   name: "Encyclopedia",
 
-  components: {
-    HelloWorld,
-  },
+  components: {},
   data() {
     return {
       store,
-      posts: null,
-      filterdPosts: null,
 
       encyclopediaItems: null,
 
@@ -239,16 +234,8 @@ export default {
       descriptionForm: null,
 
       //filteri
-
-      filterPlayersNum: null,
-
       filterCategory: null,
       filterPoisonous: null,
-
-      filterArea: null,
-      //upitni
-      fiterTimeframe: null,
-      filterSort: null,
     };
   },
   watch: {
@@ -258,11 +245,8 @@ export default {
     //"store.searchTerm": function(val) {this.fetchPosts(val)}
   },
   methods: {
-    //change to encyclopedia
     async getEncyclopediaItem() {
       let search = store.searchTerm;
-
-      console.log("filter categori ", this.filterCategory);
 
       let filters = {
         poisonousFilter: this.filterPoisonous,
@@ -296,7 +280,7 @@ export default {
       this.$router.push(`/encyclopedia/${itemId}`);
     },
     //filter
-    filterPosts() {
+    filterItems() {
       //pozvati get
       this.getEncyclopediaItem();
     },
@@ -327,7 +311,6 @@ export default {
     },
 
     trigerFunction() {
-      console.log("ovo se traži :", store.searchTerm);
       this.getEncyclopediaItem();
       return store.searchTerm;
     },

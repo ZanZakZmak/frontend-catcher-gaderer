@@ -27,11 +27,13 @@ Service.interceptors.response.use(
     return response;
   },
   (error) => {
+    console.log("Interceptor", error);
     if (error.response.status == 401) {
       console.log("ovdje bacam ");
       Auth.logout();
       //$router.go();
     }
+    return error;
     // console.error('Interceptor', error.response);
   }
 );
@@ -76,47 +78,6 @@ let Posts = {
         return { errorMassage: error };
       }
     },
-    //change this
-    async getOne(postId) {
-      try {
-        let response = await Service.get(`/post/${postId}`);
-        let data = response.data;
-        console.log("Podaci s backenda", data);
-        return data;
-      } catch (error) {
-        console.log("moj error ", error);
-      }
-    },
-    /*async getAll(searchTerm) {
-      try {
-        //return Service.get(`/posts?title=${searchTerm}`);
-        let response = await Service.get(`/tesiranjeMongoTAN`);
-        let data = response.data;
-        console.log("Podaci s backenda", data);
-        
-        return data;
-  
-        //return await Service.get(`/data`);
-      } catch (error) {
-        console.log("moj error ", error);
-      }
-    },*/
-    /*async add(post) {
-      let x = {
-        name: "Jane Doe",
-        email: "jane@abc.com",
-        age: 26,
-        hobbies: ["databases", "painting", "soccer"],
-      };
-      let response = await Service.post("/tesiranjeMongoTAN", post);
-  
-      return response;
-    },*/
-    async delete(postId) {
-      let response = await Service.delete(`/tesiranjeMongoTAN/${postId}`);
-
-      return response;
-    },
   },
   // naš objekt za sve pozive koji se dotiču `info`
   Info: {
@@ -157,21 +118,22 @@ let Posts = {
         return { errorMassage: error };
       }
     },
-    async getOne(postId) {
-      try {
-        let response = await Service.get(`/post/${postId}`);
-        let data = response.data;
-        console.log("Podaci s backenda", data);
-        return data;
-      } catch (error) {
-        console.log("moj error ", error);
-      }
-    },
-    async delete(postId) {
-      let response = await Service.delete(`/tesiranjeMongoTAN/${postId}`);
+  },
+  //funkcije za single post
+  async getOne(postId) {
+    try {
+      let response = await Service.get(`/post/${postId}`);
+      let data = response.data;
+      console.log("Podaci s backenda", data);
+      return data;
+    } catch (error) {
+      console.log("moj error ", error);
+    }
+  },
+  async delete(postId) {
+    let response = await Service.delete(`/tesiranjeMongoTAN/${postId}`);
 
-      return response;
-    },
+    return response;
   },
   // naš objekt za sve pozive koji se dotiču `comments`
   Comments: {
@@ -245,6 +207,7 @@ let Encyclopedia = {
     }
   },
 };
+
 // naš objekt za sve pozive koji se dotiču `Auth`
 let Auth = {
   async login(email, password) {
@@ -252,22 +215,38 @@ let Auth = {
       email: email,
       password: password,
     });
-    let user = response.data;
-    //spremanje tokena u local storage
-    localStorage.setItem("user", JSON.stringify(user));
-    return true;
+
+    //preko statusa za axsios error
+    if (response.status > 300) {
+      //return response.response.data.error;
+      return false;
+    } else {
+      let user = response.data;
+      //spremanje tokena u local storage
+      localStorage.setItem("user", JSON.stringify(user));
+      return true;
+    }
   },
   logout() {
     localStorage.removeItem("user");
   },
   async register(user) {
     let response = await Service.post("/user", {
-      name: user.username,
+      username: user.username,
       email: user.email,
       password: user.password,
     });
-    console.log("login: ", response.data);
-    return true;
+    console.log("login: ", response.status);
+
+    //preko statusa za axsios error
+    if (response.status > 300) {
+      //return response.response.data.error;
+      console.log("desio se false");
+      return false;
+    } else {
+      console.log("desio se true");
+      return true;
+    }
   },
   getUser() {
     //promjenio zbog statea
@@ -285,19 +264,70 @@ let Auth = {
     }
   },
   // provjera jesmo li autentificirani
+  //used ?
   authenticated() {
     let user = Auth.getUser();
     //promjeno zbog dohvata sa statea
-    if (user.token) {
+    if (user?.token) {
       return true;
     }
     return false;
+  },
+
+  //edit profile rute
+  async changePassword(newPassword, oldPassword) {
+    let response = await Service.patch("/user/password", {
+      newPassword: newPassword,
+      oldPassword: oldPassword,
+    });
+
+    //preko statusa za axsios error
+    if (response.status > 300) {
+      return response.response.data.error;
+    } else {
+      return "uspjesna promjena";
+    }
+  },
+  async changeEmail(newEmail, oldPassword) {
+    let response = await Service.patch("/user/email", {
+      newEmail: newEmail,
+      oldPassword: oldPassword,
+    });
+    //preko statusa za axsios error
+    if (response.status > 300) {
+      return response.response.data.error;
+    } else {
+      return "uspjesna promjena";
+    }
+  },
+  async changeUsername(newUsername, oldPassword) {
+    let response = await Service.patch("/user/username", {
+      newUsername: newUsername,
+      oldPassword: oldPassword,
+    });
+    //preko statusa za axsios error
+    if (response.status > 300) {
+      return response.response.data.error;
+    } else {
+      return "uspjesna promjena";
+    }
+
+    /* try {
+    } catch (error) {
+      // Handle the error from the backend
+      if (error.response) {
+        // If the server responded with a non-2xx status
+        console.log("response error", error.response.data.error);
+      } else {
+        // Handle any other errors (like network issues)
+        console.log("response error An unexpected error occurred");
+      }
+    }*/
   },
   //state koristimo kako bi unjeli ove varijable da su dostupne u vue.js
   // get sluzi za takozvane getter funkcije koje funkcijoniraju u js slicno kao computed to jest mogu bit funkcija ali ih možemo čitati poput varijable.
   state: {
     get user() {
-      console.log("test case", Auth.getUser());
       return Auth.getUser();
     },
     get authenticated() {

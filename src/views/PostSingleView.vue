@@ -196,7 +196,9 @@
                 dark
                 color="red darken-2"
                 x-small
-                @click="deleteComent(postInfo.id, comment.id)"
+                @click="
+                  deleteComent(postInfo.id, comment.id, comment.createdById)
+                "
               >
                 <v-icon dark> mdi mdi-close-thick</v-icon>
               </v-btn>
@@ -242,14 +244,12 @@ export default {
         requiredArr: (value) => value?.length >= 1 || "Required.",
         //isCroppa: (value)=>{},
       },
-
       commentText: null,
     };
   },
   methods: {
-    //get one post
     async getPostSingle(postId) {
-      let data = await Posts.Social.getOne(postId);
+      let data = await Posts.getOne(postId);
       this.postInfo = {
         type: data.type,
         area: data.area,
@@ -265,7 +265,6 @@ export default {
         id: data._id,
       };
     },
-    //dell post
 
     //add comment
     async addComment() {
@@ -281,11 +280,13 @@ export default {
       this.refresh();
     },
     //delete coment?
-    async deleteComent(postId, commentId) {
+    async deleteComent(postId, commentId, createdBy) {
       //let postId = this.postInfo.id;
       //stavit provjeru negdje
-      await Posts.Comments.delete(postId, commentId);
-      this.refresh();
+      if (createdBy == this.auth.user.id) {
+        await Posts.Comments.delete(postId, commentId);
+        this.refresh();
+      }
     },
     closeDialog() {
       this.commentText = null;

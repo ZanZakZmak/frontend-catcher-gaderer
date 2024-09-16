@@ -14,11 +14,12 @@
       label="Pretraga (title,text,createdby)"
       prepend-inner-icon="mdi-magnify"
     ></v-text-field>
+    <!--Optional Chaining (?.)-->
     <v-spacer></v-spacer>
-    <v-btn @click="logOut()" v-if="auth.authenticated">
+    <v-btn @click="logOut()" v-if="auth?.authenticated">
       <v-icon left>mdi-logout-variant</v-icon> <span>Logout</span>
     </v-btn>
-    <v-btn v-if="!auth.authenticated">
+    <v-btn v-if="!auth?.authenticated">
       <v-icon left>mdi-logout-variant</v-icon> <span>Login</span>
     </v-btn>
 
@@ -33,7 +34,8 @@
 
           <v-list-item-content>
             <v-list-item-title>
-              {{ auth.user.email }}
+              <!--Optional Chaining (?.)-->
+              {{ auth?.user?.email }}
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -98,7 +100,6 @@ export default {
   },
   methods: {
     logOut() {
-      console.log("signed out");
       console.log("signed out", this.auth.authenticated);
       Auth.logout();
       this.$router.go();

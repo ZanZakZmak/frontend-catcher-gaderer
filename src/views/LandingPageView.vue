@@ -13,6 +13,7 @@
             src="@/assets/logo.png"
           ></v-img>
         </v-col>
+        <!--Optional Chaining (?.): A modern JavaScript feature that avoids errors when trying to access properties on null or undefined objects.-->
         <v-col
           v-show="!auth.authenticated"
           align="center"
@@ -45,6 +46,7 @@
             </v-card-actions>
           </v-card>
         </v-col>
+
         <v-col align="start" justify="center" cols="12">
           <v-card color="teal darken-1">
             <v-card-title><h1>Intro o stranici</h1> </v-card-title>

@@ -11,9 +11,9 @@
             <!--v-model="valid" cleareble krivo upisan-->
             <v-form v-model="valid">
               <v-text-field
-                v-model="userName"
+                v-model="username"
                 dense
-                label="UserName"
+                label="Username"
                 clearble
                 type="text"
                 outlined
@@ -87,22 +87,19 @@
 
 <script>
 import { Auth } from "@/services";
-import HelloWorld from "../components/HelloWorld";
 
 export default {
-  name: "Posts",
+  name: "Register",
 
-  components: {
-    HelloWorld,
-  },
+  components: {},
   data() {
     return {
       //form
       valid: true,
       email: null,
       password: null,
-      userName: null,
-      showIcon: true,
+      username: null,
+      //showIcon: true,
       //regEX exspresions for rules
       rules: {
         required: (value) => !!value || "Required.",
@@ -120,19 +117,29 @@ export default {
   methods: {
     //popraviti ovu metodu poslje i u ruteru await
     async register() {
+      //maknuti try chatch
       try {
-        await Auth.register({
+        let result = await Auth.register({
           username: this.username,
           email: this.email,
           password: this.password,
         });
 
-        //polje napraviti ovaj dio
-        let result = await Auth.login(this.email, this.password);
-
         console.log("dali sam ulogiran ", result);
-        if (result === true) {
-          this.$router.push({ name: "posts" });
+        if (result) {
+          //polje napraviti ovaj dio
+          let resultVerify = await Auth.login(this.email, this.password);
+          if (resultVerify) {
+            this.$router.push({ name: "posts" });
+          } else {
+            //snackbar aktivirati kod errora
+            this.text = "error wile try to veryfy";
+            this.snackbar = true;
+          }
+        } else {
+          //snackbar aktivirati kod errora
+          this.text = "Wrong email/Password or email alredy exists";
+          this.snackbar = true;
         }
       } catch (error) {
         console.log("error: ", error);

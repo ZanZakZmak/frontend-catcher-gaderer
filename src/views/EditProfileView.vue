@@ -177,8 +177,6 @@
 </template>
 
 <script>
-//{? #ocjena #liste prijatelja i zahtjeva, #zasebni search za korisnike #profil za korisnika #dodavanje avatara nece se izraditi}
-
 import store from "@/store";
 import { Auth } from "@/services";
 
@@ -222,17 +220,42 @@ export default {
   },
   methods: {
     async changeUsername() {
-      //na back iduser usernameNew oldPassword
+      if (this.formValidOldPassword && this.formValidName) {
+        let result = await Auth.changeUsername(
+          this.newUsername,
+          this.oldPassword
+        );
+        this.snackbar = true;
+        this.text = result;
+      } else {
+        this.snackbar = true;
+        this.text = "molim vas upišite lozinku  i info u određena polja";
+      }
     },
 
-    //treba dodat da ponovo autentificira za ovo
     async changePassword() {
-      //na back iduser passwordNew oldPassword
+      if (this.formValidOldPassword && this.formValidPassword) {
+        let result = await Auth.changePassword(
+          this.newPassword,
+          this.oldPassword
+        );
+        this.snackbar = true;
+        this.text = result;
+      } else {
+        this.snackbar = true;
+        this.text = "molim vas upišite lozinku  i info u određena polja";
+      }
     },
 
-    //treba dodat da ponovo autentificira za ovo
     async changeEmail() {
-      //na back iduser emailNew oldPassword
+      if (this.formValidOldPassword && this.formValidEmail) {
+        let result = await Auth.changeEmail(this.newEmail, this.oldPassword);
+        this.snackbar = true;
+        this.text = result;
+      } else {
+        this.snackbar = true;
+        this.text = "molim vas upišite lozinku  i info u određena polja";
+      }
     },
   },
   beforeCreate() {},

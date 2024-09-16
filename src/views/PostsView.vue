@@ -263,23 +263,18 @@
 import { Posts, Auth } from "@/services";
 import moment from "moment";
 import store from "@/store.js";
-import HelloWorld from "../components/HelloWorld";
 
 export default {
   name: "Posts",
 
-  components: {
-    HelloWorld,
-  },
+  components: {},
   data() {
     return {
       store,
       posts: null,
-      filterdPosts: null,
-
+      //filter calendar
       menu1: false,
       menu2: false,
-
       dateForm: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
         .substr(0, 10),
@@ -301,7 +296,7 @@ export default {
         //isCroppa: (value)=>{},
       },
 
-      //varijable forme za dodvananje novog posta
+      //varijable forme za dodvananje novog posta promjenit img
       titleForm: null,
       textForm: null,
       imgUrlForm:
@@ -312,21 +307,14 @@ export default {
 
       //filteri
 
-      filterPlayersNum: null,
-
       filterCategory: null,
       filterArea: null,
       //upitni
-      fiterTimeframe: null,
-      filterSort: null,
+      //fiterTimeframe: null,
+      //filterSort: null,
     };
   },
-  /*computed: {
-    trigerFunction() {
-      console.log("ovo se traži :", store.searchTerm);
-      return store.searchTerm;
-    },
-  },*/
+
   watch: {
     "store.searchTerm": function () {
       this.trigerFunction();
@@ -364,7 +352,7 @@ export default {
         title: this.titleForm,
         text: this.textForm,
         imgUrl: this.imgUrlForm,
-        createdBy: Auth.getUser().email,
+        createdBy: Auth.getUser().username,
         createdById: Auth.getUser().id,
         createdTime: Date.now(),
         area: this.areaForm,
@@ -387,8 +375,6 @@ export default {
       this.getPosts();
     },
     clearFilter() {
-      this.filterPlayersNum = null;
-
       this.filterCategory = null;
       this.filterArea = null;
       //pozvati get
@@ -406,6 +392,7 @@ export default {
       this.dialog = false;
     },
 
+    //za watch
     trigerFunction() {
       console.log("ovo se traži :", store.searchTerm);
       this.getPosts();
