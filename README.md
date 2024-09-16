@@ -2,7 +2,7 @@
 
 Web aplikacija za povezivanje ljubitelja rekretivnog načina života, kako bi pronašli namjernize za hraniti se i uživati u prirodi <br>
 funkcijonalnost razni postovi socialni ili forum tip postova te razlićite pretrage nad njima, <br>
-mogućnost dodavanja i brisanja komentara, te mogucnos dodavanja vrsta u encyclopediu i pretraživanje istih .
+mogućnost dodavanja i brisanja komentara, te mogucnos dodavanja vrsta u encyclopediu i pretraživanje istih, te mogučnost dodavanja vlastitih slika.
 
 ## Autori i zaduženja
 
