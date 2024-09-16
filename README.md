@@ -1,19 +1,24 @@
 # frontend-catcher-gaderer
 
-## Project setup
-```
-npm install
-```
+Web aplikacija za povezivanje ljubitelja rekretivnog načina života, kako bi pronašli namjernize za hraniti se i uživati u prirodi <br>
+funkcijonalnost razni postovi socialni ili forum tip postova te razlićite pretrage nad njima, <br>
+mogućnost dodavanja i brisanja komentara, te mogucnos dodavanja vrsta u encyclopediu i pretraživanje istih .
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Autori i zaduženja
 
-### Compiles and minifies for production
-```
-npm run build
-```
+Žan-Žak Žmak (zzmak@unipu.hr) - samostalan rad, implementacija cjele aplikacije
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Javni link na aplikaciju
+
+Web frontend: [hostani frontend link](https://frontend-catcher-gaderer.vercel.app/)
+
+## link na backend
+
+git backend: [go to backend](https://github.com/ZanZakZmak/backend-catcher-gaderer.git)
+
+## Organizacija
+
+[Sveučilište Jurja Dobrile u Puli](https://www.unipu.hr/)<br>
+[Fakultet informatike u Puli](https://fipu.unipu.hr/)<br>
+Web aplikacije, ak.god. 2023./2024.<br>
+Mentor: Nikola Tanković (https://fipu.unipu.hr/fipu/nikola.tankovic, nikola.tankovic@unipu.hr)<br>
