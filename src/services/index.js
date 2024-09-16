@@ -131,9 +131,8 @@ let Posts = {
     }
   },
   async delete(postId) {
-    let response = await Service.delete(`/tesiranjeMongoTAN/${postId}`);
-
-    return response;
+    //let response = await Service.delete(`/tesiranjeMongoTAN/${postId}`);
+    //return response;
   },
   // naš objekt za sve pozive koji se dotiču `comments`
   Comments: {

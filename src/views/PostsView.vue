@@ -34,7 +34,7 @@
                     </v-col>
                     <v-col cols="12" sm="6">
                       <div>add image</div>
-                      <!--<croppa v-model="myCroppa"></croppa>-->
+                      <croppa v-model="myCroppa"></croppa>
                     </v-col>
 
                     <v-col cols="12" sm="6">
@@ -261,6 +261,7 @@
 
 <script>
 import { Posts, Auth } from "@/services";
+import { ref, uploadBytes, getDownloadURL, storage } from "../../firebase.js";
 import moment from "moment";
 import store from "@/store.js";
 
@@ -271,6 +272,7 @@ export default {
   data() {
     return {
       store,
+      auth: Auth.state,
       posts: null,
       //filter calendar
       menu1: false,
@@ -351,7 +353,7 @@ export default {
         type: "social",
         title: this.titleForm,
         text: this.textForm,
-        imgUrl: this.imgUrlForm,
+        imgUrl: await this.uploadCroppedImage(),
         createdBy: Auth.getUser().username,
         createdById: Auth.getUser().id,
         createdTime: Date.now(),
@@ -369,6 +371,32 @@ export default {
     gotoOnePost(postId) {
       this.$router.push(`/post/${postId}`);
     },
+    //croppa
+    getImageBlob() {
+      return new Promise((resolve, error) => {
+        this.myCroppa.generateBlob((blob) => {
+          resolve(blob);
+        });
+      });
+    },
+    async uploadCroppedImage() {
+      try {
+        let blobData = await this.getImageBlob();
+        let imageName =
+          "postImage/" + this.auth.user.username + Date.now() + ".png";
+        //const storage = getStorage();
+        const imagesRef = ref(storage, imageName);
+        await uploadBytes(imagesRef, blobData).then((result) => {
+          //console.log("Uploaded a blob or file!", result);
+        });
+        let imageUrl = await getDownloadURL(ref(storage, imageName));
+
+        return imageUrl;
+      } catch (error) {
+        console.log("add social post eror->", error);
+        return null;
+      }
+    },
     //filter
     filterPosts() {
       //pozvati get
@@ -385,9 +413,9 @@ export default {
       //postavi vrijedosti na null
       this.titleForm = null;
       this.textForm = null;
-      // imgUrlForm="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Balantiocheilos_melanopterus_-_Karlsruhe_Zoo_02_%28cropped%29.jpg/1920px-Balantiocheilos_melanopterus_-_Karlsruhe_Zoo_02_%28cropped%29.jpg",
       this.areaForm = null;
       this.categoryForm = null;
+      this.myCroppa.remove();
       //zatvoriti dialog
       this.dialog = false;
     },

@@ -34,7 +34,7 @@
                     </v-col>
                     <v-col cols="12" sm="6">
                       <div>add image</div>
-                      <!--<croppa v-model="myCroppa"></croppa>-->
+                      <croppa v-model="myCroppa"></croppa>
                     </v-col>
                     <v-col cols="12" sm="6">
                       <v-text-field
@@ -196,6 +196,7 @@
 
 <script>
 import { Encyclopedia } from "@/services";
+import { ref, uploadBytes, getDownloadURL, storage } from "../../firebase.js";
 import store from "@/store.js";
 
 export default {
@@ -227,8 +228,7 @@ export default {
       nameForm: null,
       nameLatForm: null,
       namesAltForm: null,
-      imgUrlForm:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Balantiocheilos_melanopterus_-_Karlsruhe_Zoo_02_%28cropped%29.jpg/1920px-Balantiocheilos_melanopterus_-_Karlsruhe_Zoo_02_%28cropped%29.jpg",
+
       poisonForm: null,
       categoryForm: null,
       descriptionForm: null,
@@ -265,7 +265,7 @@ export default {
         name: this.nameForm,
         nameLat: this.nameLatForm,
         namesAlt: this.namesAltForm,
-        imgUrl: this.imgUrlForm,
+        imgUrl: await this.uploadCroppedImage(),
         poison: this.poisonForm,
         category: this.categoryForm,
         description: this.descriptionForm,
@@ -279,6 +279,32 @@ export default {
     gotoOneEncyclopediaItem(itemId) {
       this.$router.push(`/encyclopedia/${itemId}`);
     },
+    //croppa
+    getImageBlob() {
+      return new Promise((resolve, error) => {
+        this.myCroppa.generateBlob((blob) => {
+          resolve(blob);
+        });
+      });
+    },
+    async uploadCroppedImage() {
+      try {
+        let blobData = await this.getImageBlob();
+        let imageName = "encyclopediaImage/" + Date.now() + ".png";
+        //const storage = getStorage();
+        const imagesRef = ref(storage, imageName);
+        await uploadBytes(imagesRef, blobData).then((result) => {
+          //console.log("Uploaded a blob or file!", result);
+        });
+        let imageUrl = await getDownloadURL(ref(storage, imageName));
+
+        return imageUrl;
+      } catch (error) {
+        console.log("add social post eror->", error);
+        return null;
+      }
+    },
+
     //filter
     filterItems() {
       //pozvati get
@@ -296,11 +322,10 @@ export default {
       this.nameForm = null;
       this.nameLatForm = null;
       this.namesAltForm = null;
-      //this.imgUrlForm=null;
       this.poisonForm = null;
       this.categoryForm = null;
       this.descriptionForm = null;
-      // imgUrlForm="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Balantiocheilos_melanopterus_-_Karlsruhe_Zoo_02_%28cropped%29.jpg/1920px-Balantiocheilos_melanopterus_-_Karlsruhe_Zoo_02_%28cropped%29.jpg",
+      this.myCroppa.remove();
 
       //zatvoriti dialog
       this.dialog = false;
